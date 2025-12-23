@@ -36,18 +36,24 @@ jobs:
         if: always()
         continue-on-error: true
         run: |
+          set -eo pipefail
           REPO_NAME="${GITHUB_REPOSITORY#*/}"
           OWNER="${GITHUB_REPOSITORY_OWNER:-${GITHUB_REPOSITORY%%/*}}"
           HISTORY_URL="https://${OWNER}.github.io/${REPO_NAME}/history.zip"
           echo "Attempting to download history from ${HISTORY_URL}"
           mkdir -p history-download allure-results/history
-          if curl -fsSL "${HISTORY_URL}" -o history-download/history.zip; then
+          STATUS=$(curl -w "%{http_code}" -sSLo history-download/history.zip "${HISTORY_URL}" || true)
+          if [ "$STATUS" = "200" ]; then
+            echo "history.zip found; extracting"
             unzip -o history-download/history.zip -d history-download >/dev/null 2>&1 || true
             if [ -d "history-download/history" ]; then
               cp -r history-download/history/* allure-results/history/ || true
+              echo "Copied history files:" && ls -la allure-results/history || true
+            else
+              echo "history directory missing inside zip"
             fi
           else
-            echo "No prior history.zip found (likely first run)"
+            echo "No prior history.zip found (status $STATUS); likely first or clean run"
           fi
 
       - name: Run Cypress tests
@@ -108,7 +114,11 @@ jobs:
       - name: Package history for next run
         run: |
           if [ -d "allure-report/history" ]; then
+            echo "Packaging history.zip for next run"
             (cd allure-report && zip -r history.zip history >/dev/null)
+            ls -la allure-report/history.zip || true
+          else
+            echo "No history folder found in generated report; trend data will not persist"
           fi
 
       - name: Setup Pages
