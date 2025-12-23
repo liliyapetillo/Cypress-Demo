@@ -1,10 +1,10 @@
-name: CI
+name: CI (Deprecated - use cypress-tests.yml instead)
 
 on:
   push:
-    branches: [ main ]
+    branches: [ deprecated-ci-branch-never-matches ]
   pull_request:
-    branches: [ main ]
+    branches: [ deprecated-ci-branch-never-matches ]
 
 jobs:
   test:
