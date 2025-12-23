@@ -65,6 +65,16 @@ jobs:
         if: always()
         run: npm run allure:generate
 
+      - name: Inspect generated history
+        if: always()
+        run: |
+          if [ -d "allure-report/history" ]; then
+            echo "Generated history contents:" && ls -la allure-report/history
+            echo "history-trend.json sample:" && head -n 40 allure-report/history/history-trend.json || true
+          else
+            echo "No history folder found in generated report"
+          fi
+
       - name: Upload Allure report artifacts
         if: always()
         uses: actions/upload-artifact@v4
