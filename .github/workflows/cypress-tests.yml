@@ -1,0 +1,121 @@
+name: Cypress Tests with Allure Report
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+
+concurrency:
+  group: "pages"
+  cancel-in-progress: false
+
+jobs:
+  cypress-run:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Download previous Allure history
+        if: always()
+        continue-on-error: true
+        run: |
+          # Try to download the existing report from GitHub Pages to preserve history
+          gh_pages_url="https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}"
+          echo "Attempting to download history from: $gh_pages_url"
+          mkdir -p allure-results
+          curl -L "${gh_pages_url}/history.zip" -o history.zip 2>/dev/null || echo "No previous history found"
+          if [ -f history.zip ]; then
+            unzip -o history.zip -d allure-results/ || echo "Failed to extract history"
+            rm history.zip
+          fi
+
+      - name: Run Cypress tests
+        run: npm run cypress:run
+        continue-on-error: true
+
+      - name: Generate Allure Report with History
+        if: always()
+        run: |
+          # Generate report (will include history if downloaded)
+          npx allure generate allure-results --clean -o allure-report
+          # Create a zip of the history for next run
+          cd allure-report && zip -r ../history.zip history/ && cd ..
+
+      - name: Upload Allure report as artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: allure-report
+          path: |
+            allure-report
+            history.zip
+          retention-days: 30
+
+      - name: Upload test videos as artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: cypress-videos
+          path: cypress/videos
+          retention-days: 7
+
+      - name: Upload screenshots on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: cypress-screenshots
+          path: cypress/screenshots
+          retention-days: 7
+
+  deploy-report:
+    needs: cypress-run
+    if: always()
+    runs-on: ubuntu-latest
+    
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    
+    steps:
+      - name: Download Allure report
+        uses: actions/download-artifact@v4
+        with:
+          name: allure-report
+          path: allure-report
+
+      - name: Add history.zip to report root
+        run: |
+          # Make sure history.zip is in the root for next run to download
+          if [ -f history.zip ]; then
+            cp history.zip allure-report/
+          fi
+
+      - name: Setup Pages
+        uses: actions/configure-pages@v4
+
+      - name: Upload artifact for GitHub Pages
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: allure-report
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

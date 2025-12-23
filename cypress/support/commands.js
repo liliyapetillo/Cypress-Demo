@@ -1,0 +1,67 @@
+// Custom Cypress commands.
+Cypress.Commands.add('login', (email, password) => {
+  cy.get('input[placeholder="Email"], input#email').clear().type(email);
+  cy.get('input[placeholder="Password"], input#password').clear().type(password);
+  cy.contains('button', 'Submit').click();
+});
+
+/**
+ * Tries multiple selectors until one is found, enhancing test resilience.
+ * @param {string[]} selectors - Array of selectors to try in order
+ * @param {object} options - Cypress get() options
+ * @returns {Cypress.Chainable} The first matching element
+ */
+Cypress.Commands.add('getFirst', (selectors, options = {}) => {
+  const attempts = Array.isArray(selectors) ? selectors : [selectors];
+  
+  return cy.wrap(null).then(() => {
+    for (let i = 0; i < attempts.length; i++) {
+      const selector = attempts[i];
+      const element = Cypress.$(selector);
+      
+      if (element.length > 0) {
+        if (i > 0) {
+          cy.log(`⚠️ Fallback used: ${selector} (primary selector failed)`);
+          cy.allure().attachment('Selector Fallback', `Primary selector failed. Used: ${selector}`, 'text/plain');
+        }
+        return cy.get(selector, options);
+      }
+    }
+    
+    const errorMsg = `None of the selectors matched: ${attempts.join(', ')}`;
+    cy.allure().attachment('Selector Error', errorMsg, 'text/plain');
+    throw new Error(errorMsg);
+  });
+});
+
+/**
+ * Safe click with retry logic and better error reporting.
+ * @param {string|string[]} selectors - Selector(s) for element to click
+ * @param {object} options - Click options
+ */
+Cypress.Commands.add('safeClick', (selectors, options = {}) => {
+  const { retries = 2, ...clickOptions } = options;
+  
+  const attemptClick = (attempt = 0) => {
+    cy.getFirst(selectors)
+      .should('be.visible')
+      .then(($el) => {
+        try {
+          cy.wrap($el).click(clickOptions);
+        } catch (error) {
+          if (attempt < retries) {
+            cy.log(`⚠️ Click failed, retrying... (attempt ${attempt + 1}/${retries})`);
+            // eslint-disable-next-line cypress/no-unnecessary-waiting
+            cy.wait(500);
+            attemptClick(attempt + 1);
+          } else {
+            cy.allure().attachment('Click Error', `Failed after ${retries} retries: ${error.message}`, 'text/plain');
+            throw error;
+          }
+        }
+      });
+  };
+  
+  attemptClick();
+});
+
