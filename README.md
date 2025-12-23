@@ -1,5 +1,8 @@
 # Cypress Contact List App (Cypress + Allure)
 
+[![Tests](https://github.com/liliyapetillo/Cypress-Demo/actions/workflows/cypress-tests.yml/badge.svg)](https://github.com/liliyapetillo/Cypress-Demo/actions/workflows/cypress-tests.yml)
+[Allure Report (GitHub Pages)](https://liliyapetillo.github.io/Cypress-Demo/)
+
 End-to-end tests for the Contact List App (sign up, login, add contacts, edit contact) with Cypress, Page Object Model, Allure reporting, and API-backed assertions.
 
 ## Prerequisites
