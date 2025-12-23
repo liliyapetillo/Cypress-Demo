@@ -32,17 +32,23 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Download previous Allure history
+      - name: Download previous Allure history (from Pages)
         if: always()
         continue-on-error: true
         run: |
-          gh run download -n allure-report -D allure-report-history || true
-          mkdir -p allure-results/history
-          if [ -d "allure-report-history/allure-report/history" ]; then
-            cp -r allure-report-history/allure-report/history/* allure-results/history/ || true
+          REPO_NAME="${GITHUB_REPOSITORY#*/}"
+          OWNER="${GITHUB_REPOSITORY_OWNER:-${GITHUB_REPOSITORY%%/*}}"
+          HISTORY_URL="https://${OWNER}.github.io/${REPO_NAME}/history.zip"
+          echo "Attempting to download history from ${HISTORY_URL}"
+          mkdir -p history-download allure-results/history
+          if curl -fsSL "${HISTORY_URL}" -o history-download/history.zip; then
+            unzip -o history-download/history.zip -d history-download >/dev/null 2>&1 || true
+            if [ -d "history-download/history" ]; then
+              cp -r history-download/history/* allure-results/history/ || true
+            fi
+          else
+            echo "No prior history.zip found (likely first run)"
           fi
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Run Cypress tests
         run: npm run cypress:run
@@ -98,6 +104,12 @@ jobs:
         with:
           name: allure-report
           path: allure-report
+
+      - name: Package history for next run
+        run: |
+          if [ -d "allure-report/history" ]; then
+            (cd allure-report && zip -r history.zip history >/dev/null)
+          fi
 
       - name: Setup Pages
         uses: actions/configure-pages@v4
