@@ -25,10 +25,15 @@ Contact List App with Cypress UI + API-backed validation and Allure reporting.
 
 ## Automation Mapping (latest)
 - P0-01/P0-02 • Signup + UI login + profile check • Automated in [cypress/e2e/auth.cy.js](../cypress/e2e/auth.cy.js)
+- P0-03 • Wrong password rejected • Automated in [cypress/e2e/auth.cy.js](../cypress/e2e/auth.cy.js)
 - P0-04 • Add contact in list • Automated in [cypress/e2e/contacts.cy.js](../cypress/e2e/contacts.cy.js)
 - P0-05 • Edit contact shows changes • Automated in [cypress/e2e/contacts.cy.js](../cypress/e2e/contacts.cy.js)
+- P0-06 • Logout clears session • Automated in [cypress/e2e/auth.cy.js](../cypress/e2e/auth.cy.js)
+- P1-02 • Required fields validation • Automated in [cypress/e2e/validation.cy.js](../cypress/e2e/validation.cy.js)
+- P1-03 • Invalid format validation • Automated in [cypress/e2e/validation.cy.js](../cypress/e2e/validation.cy.js)
+- P1-05 • Delete contact • Automated in [cypress/e2e/contacts.cy.js](../cypress/e2e/contacts.cy.js)
+- P1-07 • API failure handling • Automated in [cypress/e2e/validation.cy.js](../cypress/e2e/validation.cy.js)
 - P1-08 • Bulk add sequence • Automated in [cypress/e2e/contacts.cy.js](../cypress/e2e/contacts.cy.js)
-- P0-01/P0-02 token checks • Automated via API helpers in [cypress/e2e/auth.cy.js](../cypress/e2e/auth.cy.js)
 
 ## Status Tracking
 - Status codes: Done = automated and passing; Planned = defined but not yet automated; Gap = needs test design.
@@ -37,17 +42,17 @@ Contact List App with Cypress UI + API-backed validation and Allure reporting.
 | --- | --- | --- | --- |
 | P0-01 | Signup redirects to Contact List | Done | [cypress/e2e/auth.cy.js](../cypress/e2e/auth.cy.js) |
 | P0-02 | UI login happy path + token/profile check | Done | [cypress/e2e/auth.cy.js](../cypress/e2e/auth.cy.js) |
-| P0-03 | Wrong password rejected | Planned | — |
+| P0-03 | Wrong password rejected | Done | [cypress/e2e/auth.cy.js](../cypress/e2e/auth.cy.js) |
 | P0-04 | Add contact appears in list | Done | [cypress/e2e/contacts.cy.js](../cypress/e2e/contacts.cy.js) |
 | P0-05 | Edit contact shows changes | Done | [cypress/e2e/contacts.cy.js](../cypress/e2e/contacts.cy.js) |
-| P0-06 | Logout clears session | Planned | [cypress/e2e/auth.cy.js](../cypress/e2e/auth.cy.js) |
+| P0-06 | Logout clears session | Done | [cypress/e2e/auth.cy.js](../cypress/e2e/auth.cy.js) |
 | P1-01 | Optional fields accepted and persisted | Planned | — |
-| P1-02 | Required fields validated | Planned | [cypress/e2e/validation.cy.js](../cypress/e2e/validation.cy.js) |
-| P1-03 | Invalid email/phone formats rejected | Planned | [cypress/e2e/validation.cy.js](../cypress/e2e/validation.cy.js) |
+| P1-02 | Required fields validated | Done | [cypress/e2e/validation.cy.js](../cypress/e2e/validation.cy.js) |
+| P1-03 | Invalid email/phone formats rejected | Done | [cypress/e2e/validation.cy.js](../cypress/e2e/validation.cy.js) |
 | P1-04 | Duplicate email prevented | Planned | — |
-| P1-05 | Delete contact removes from list/API | Planned | — |
+| P1-05 | Delete contact removes from list/API | Done | [cypress/e2e/contacts.cy.js](../cypress/e2e/contacts.cy.js) |
 | P1-06 | Session persists across refresh | Planned | — |
-| P1-07 | API failure (500/timeout) shows graceful UI message | Planned | [cypress/e2e/validation.cy.js](../cypress/e2e/validation.cy.js) |
+| P1-07 | API failure (500/timeout) shows graceful UI message | Done | [cypress/e2e/validation.cy.js](../cypress/e2e/validation.cy.js) |
 | P1-08 | Bulk add contacts stays consistent via API | Done | [cypress/e2e/contacts.cy.js](../cypress/e2e/contacts.cy.js) |
 | P2-01 | Sorting/filtering stays correct after add/edit/delete | Planned | — |
 | P2-02 | Pagination/long-list performance sanity | Planned | [cypress/e2e/nonfunctional.cy.js](../cypress/e2e/nonfunctional.cy.js) |
@@ -66,8 +71,10 @@ Contact List App with Cypress UI + API-backed validation and Allure reporting.
 ## Regression Core (P0 / High)
 - P0-01: New user can sign up, redirected to Contact List.
 - P0-02: Existing user can log in and receives valid token via API.
+- P0-03: Wrong password rejected with error message.
 - P0-04: Add a new valid contact appears in list.
 - P0-05: Edit an existing contact, changes visible in list.
+- P0-06: Logout clears session and returns to login.
 - P0-06: Logout clears session and returns to login.
 
 ## Authentication & Sessions
@@ -97,16 +104,17 @@ Contact List App with Cypress UI + API-backed validation and Allure reporting.
 - Helpers in cypress/support/api.js and cypress/support/test-helpers.js for API parity and Allure steps.
 
 ## Mapping to Current Automation
-- Auth flows: [cypress/e2e/auth.cy.js](../cypress/e2e/auth.cy.js)
-- Contacts flows (add/edit/bulk): [cypress/e2e/contacts.cy.js](../cypress/e2e/contacts.cy.js)
-- Validation/API failure placeholders: [cypress/e2e/validation.cy.js](../cypress/e2e/validation.cy.js)
+- Auth flows (4 tests): [cypress/e2e/auth.cy.js](../cypress/e2e/auth.cy.js) - P0-01, P0-02, P0-03, P0-06
+- Contacts flows (4 tests): [cypress/e2e/contacts.cy.js](../cypress/e2e/contacts.cy.js) - P0-04, P0-05, P1-05, P1-08
+- Validation & errors (3 tests): [cypress/e2e/validation.cy.js](../cypress/e2e/validation.cy.js) - P1-02, P1-03, P1-07
+- E2E smoke tests (2 tests): [cypress/e2e/e2e-smoke.cy.js](../cypress/e2e/e2e-smoke.cy.js) - complete user journeys
 - Non-functional placeholders: [cypress/e2e/nonfunctional.cy.js](../cypress/e2e/nonfunctional.cy.js)
 - Pages: [cypress/pages/SignupPage.js](../cypress/pages/SignupPage.js), [cypress/pages/LoginPage.js](../cypress/pages/LoginPage.js), [cypress/pages/AddContactPage.js](../cypress/pages/AddContactPage.js), [cypress/pages/ContactListPage.js](../cypress/pages/ContactListPage.js)
 
 ## Automation Backlog Suggestions
-- Add negative auth (P0-03), optional fields, duplicate, delete, session persistence, and API failure cases.
+- Add optional fields (P1-01), duplicate email validation (P1-04), session persistence (P1-06).
 - Add direct API contract checks for create/edit/list/delete contacts.
-- Expand non-functional: performance timing assertions, basic a11y, visual sanity snapshots.
+- Expand non-functional: performance timing assertions, basic a11y, visual sanity snapshots (P2-02-05).
 
 ## Exit Criteria
 - Core P0s green on primary browser and key P1s stable.

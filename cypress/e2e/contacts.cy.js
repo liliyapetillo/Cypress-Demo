@@ -135,5 +135,54 @@ describe('Contacts Suite', () => {
     });
   });
 
+  describe('P1-05 Contacts - Delete', () => {
+    it('P1-05 Delete contact removes from list and API', () => {
+      const user = generateUser();
+      testState.user = user;
+      Cypress.env('user', user);
+
+      step('Sign up new user', () => {
+        signupPage.visit();
+        signupPage.signUp(user.firstName, user.lastName, user.email, user.password);
+        contactListPage.expectHeading();
+      });
+
+      const contact = generateContact();
+      step('Create contact via UI', () => {
+        contactListPage.clickAddNewContact();
+        addContactPage.fillContact(contact);
+        addContactPage.submit();
+        addContactPage.returnToList();
+        contactListPage.waitForContact(contact.email);
+      });
+
+      step('Delete contact via UI', () => {
+        contactListPage.openContact(contact.email);
+        cy.contains('button', 'Delete Contact', { timeout: 10000 }).should('be.visible').click();
+        cy.url().should('include', '/contactList');
+        contactListPage.expectHeading();
+      });
+
+      step('Verify contact removed from list', () => {
+        cy.get('body').then(($body) => {
+          if ($body.find('#myTable').length > 0) {
+            cy.get('#myTable').should('not.contain', contact.email);
+          } else {
+            // Table doesn't exist when there are no contacts - this is expected
+            cy.log('Contact list is empty after delete - table not rendered');
+          }
+        });
+      });
+
+      step('Verify contact removed via API', () => {
+        ensureToken(user).then((token) => {
+          apiGetContacts(token).then((contacts) => {
+            expect(contacts.some((c) => c.email === contact.email)).to.be.false;
+          });
+        });
+      });
+    });
+  });
+
   // Planned cases moved to docs/testing-matrix.md to avoid grey entries in Allure.
 });
