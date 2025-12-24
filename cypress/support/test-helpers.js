@@ -42,24 +42,4 @@ export const ensureToken = (user) =>
     return token;
   });
 
-// Planned tests control: define tests only when explicitly enabled
-const plannedEnabled = () => {
-  const val = Cypress.env('includePlanned');
-  return val === true || val === 'true';
-};
 
-export const describePlanned = (title, fn) => {
-  if (plannedEnabled()) {
-    describe(title, fn);
-  }
-};
-
-export const itPlanned = (title, fn) => {
-  if (plannedEnabled()) {
-    if (fn) {
-      it(title, fn);
-    } else {
-      it(title);
-    }
-  }
-};

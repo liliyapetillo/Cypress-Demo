@@ -34,34 +34,4 @@ Cypress.Commands.add('getFirst', (selectors, options = {}) => {
   });
 });
 
-/**
- * Safe click with retry logic and better error reporting.
- * @param {string|string[]} selectors - Selector(s) for element to click
- * @param {object} options - Click options
- */
-Cypress.Commands.add('safeClick', (selectors, options = {}) => {
-  const { retries = 2, ...clickOptions } = options;
-  
-  const attemptClick = (attempt = 0) => {
-    cy.getFirst(selectors)
-      .should('be.visible')
-      .then(($el) => {
-        try {
-          cy.wrap($el).click(clickOptions);
-        } catch (error) {
-          if (attempt < retries) {
-            cy.log(`⚠️ Click failed, retrying... (attempt ${attempt + 1}/${retries})`);
-            // eslint-disable-next-line cypress/no-unnecessary-waiting
-            cy.wait(500);
-            attemptClick(attempt + 1);
-          } else {
-            cy.allure().attachment('Click Error', `Failed after ${retries} retries: ${error.message}`, 'text/plain');
-            throw error;
-          }
-        }
-      });
-  };
-  
-  attemptClick();
-});
 
