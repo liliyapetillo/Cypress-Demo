@@ -1,17 +1,13 @@
 describe('Non-functional Suite', () => {
-  it.skip('P2-02 Long-list rendering and pagination performance sanity', () => {
-    // TODO: Implement performance sanity checks (timings, pagination)
-  });
 
-  it.skip('P2-03 Accessibility smoke: focus order, labels, keyboard submit', () => {
-    // TODO: Implement a11y smoke (optionally integrate axe later)
-  });
+  it('P2-04 Cross-browser sanity (Chrome/Firefox) – login page loads and inputs are visible', () => {
+    // Minimal smoke to verify app loads across browsers; full CRUD covered in e2e-smoke.
+    cy.visit('/login');
+    cy.get('#email', { timeout: 10000 }).should('be.visible');
+    cy.get('#password').should('be.visible');
+    cy.contains('button', /login|submit/i).should('be.visible');
 
-  it.skip('P2-04 Cross-browser sanity (Chrome/Edge/Firefox) for main CRUD path', () => {
-    // NOTE: Browser selection is handled by CI/config; same tests run across browsers
-  });
-
-  it.skip('P2-05 Visual sanity: rows show key fields; empty states are clear', () => {
-    // TODO: Implement visual sanity checks (basic CSS/visibility assertions)
+    // Log the browser for context
+    cy.log(`Browser: ${Cypress.browser && (Cypress.browser.displayName || Cypress.browser.name)}`);
   });
 });

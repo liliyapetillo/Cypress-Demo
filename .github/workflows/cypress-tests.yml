@@ -56,8 +56,18 @@ jobs:
             echo "No prior history.zip found (status $STATUS); likely first or clean run"
           fi
 
-      - name: Run Cypress tests
+      - name: Run Cypress tests (Electron base)
         run: npm run cypress:run
+        env:
+          CI: true
+
+      - name: Cross-browser smoke (Chrome)
+        run: npx cypress run --browser chrome --spec "cypress/e2e/e2e-smoke.cy.js,cypress/e2e/nonfunctional.cy.js"
+        env:
+          CI: true
+
+      - name: Cross-browser smoke (Firefox)
+        run: npx cypress run --browser firefox --spec "cypress/e2e/e2e-smoke.cy.js,cypress/e2e/nonfunctional.cy.js"
         env:
           CI: true
 

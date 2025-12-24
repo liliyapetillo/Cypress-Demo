@@ -7,7 +7,7 @@
     "cypress:open": "cypress open",
     "cypress:run": "cypress run",
     "test": "npm run cypress:run",
-    "allure:generate": "[ -d allure-report/history ] && cp -R allure-report/history allure-results/ || true; allure generate allure-results -o allure-report",
+    "allure:generate": "mkdir -p allure-results/history && cp -r allure-report/history/* allure-results/history 2>/dev/null || true && allure generate allure-results -o allure-report --clean",
     "allure:open": "allure open allure-report",
     "lint": "eslint .",
     "allure:clean": "rm -rf allure-results allure-report"

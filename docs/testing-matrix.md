@@ -57,7 +57,7 @@ Contact List App with Cypress UI + API-backed validation and Allure reporting.
 | P2-01 | Sorting/filtering stays correct after add/edit/delete | Planned | — |
 | P2-02 | Pagination/long-list performance sanity | Planned | [cypress/e2e/nonfunctional.cy.js](../cypress/e2e/nonfunctional.cy.js) |
 | P2-03 | Accessibility smoke (focus/labels/keyboard) | Planned | [cypress/e2e/nonfunctional.cy.js](../cypress/e2e/nonfunctional.cy.js) |
-| P2-04 | Cross-browser sanity (Chrome/Firefox/WebKit) | Planned | [cypress/e2e/nonfunctional.cy.js](../cypress/e2e/nonfunctional.cy.js) |
+| P2-04 | Cross-browser sanity (Chrome/Firefox) | Done | [cypress/e2e/nonfunctional.cy.js](../cypress/e2e/nonfunctional.cy.js) |
 | P2-05 | Visual sanity: key fields, empty states | Planned | [cypress/e2e/nonfunctional.cy.js](../cypress/e2e/nonfunctional.cy.js) |
 
 ## Priority & Impact Definitions
