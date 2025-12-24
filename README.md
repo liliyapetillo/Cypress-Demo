@@ -138,10 +138,16 @@ The workflow [.github/workflows/cypress-tests.yml](.github/workflows/cypress-tes
 
 **What it does:**
 1. Downloads previous test history from GitHub Pages (for trends)
-2. Installs dependencies and runs Cypress tests
-3. Generates Allure report with historical trends
-4. Uploads test artifacts (videos, screenshots, Allure report)
-5. Deploys Allure report to GitHub Pages with preserved history
+2. Installs dependencies and runs Cypress tests in Electron (headless)
+3. Attempts cross-browser smoke tests (Chrome/Firefox) - optional, won't fail workflow
+4. Generates Allure report with historical trends
+5. Uploads test artifacts (videos, screenshots, Allure report)
+6. Deploys Allure report to GitHub Pages with preserved history
+
+**Browser Support:**
+- **Local**: Tests run in Electron (bundled with Cypress)
+- **CI**: Main suite runs in Electron; Chrome/Firefox smoke tests run if browsers available
+- Cross-browser steps are optional and won't fail the workflow if browsers are missing
 
 **History & Trends:**
 - First run creates baseline report

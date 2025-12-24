@@ -19,14 +19,14 @@ beforeEach(() => {
 
 // Capture uncaught exceptions and log them
 Cypress.on('uncaught:exception', (err) => {
-  cy.allure().attachment('Uncaught Exception', err.message + '\n\n' + err.stack, 'text/plain');
+  // Just log to console; Allure will capture via screenshots/videos
+  console.error('Uncaught exception:', err.message);
   // Return false to prevent test failure on application errors
-  // Remove this if you want tests to fail on any JS error
   return false;
 });
 
-// Add custom logging for failed commands
+// Failed commands will be captured by Allure automatically via screenshots/videos
 Cypress.on('fail', (error) => {
-  cy.allure().attachment('Test Failure', error.message + '\n\n' + error.stack, 'text/plain');
+  console.error('Test failure:', error.message);
   throw error;
 });
