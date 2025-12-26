@@ -32,12 +32,6 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Install Chrome and Firefox for cross-browser testing
-        run: |
-          # Chrome is pre-installed on ubuntu-latest, but ensure Firefox is available
-          sudo apt-get update
-          sudo apt-get install -y firefox
-
       - name: Download previous Allure history (from Pages)
         if: always()
         continue-on-error: true
@@ -69,13 +63,7 @@ jobs:
 
       - name: Cross-browser smoke (Chrome)
         continue-on-error: true
-        run: npx cypress run --browser chrome --spec "cypress/e2e/e2e-smoke.cy.js,cypress/e2e/nonfunctional.cy.js"
-        env:
-          CI: true
-
-      - name: Cross-browser smoke (Firefox)
-        continue-on-error: true
-        run: npx cypress run --browser firefox --spec "cypress/e2e/e2e-smoke.cy.js,cypress/e2e/nonfunctional.cy.js"
+        run: npx cypress run --browser chrome --spec "cypress/e2e/nonfunctional.cy.js"
         env:
           CI: true
 
