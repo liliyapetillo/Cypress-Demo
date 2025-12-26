@@ -83,5 +83,7 @@ describe('Auth Suite', () => {
     });
   });
 
+  // Note: The app currently clears session on reload; keeping P1-06 as Planned.
+
   // Planned cases moved to docs/testing-matrix.md to avoid grey entries in Allure.
 });

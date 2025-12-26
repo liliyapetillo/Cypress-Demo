@@ -5,7 +5,7 @@
 
 End-to-end tests for the Contact List App with Cypress, Page Object Model, Allure reporting, and API-backed assertions.
 
-**Test Coverage:** 13 automated tests covering auth, contacts CRUD, validation, and error handling.
+**Test Coverage:** 16 automated tests covering auth, contacts CRUD, validation, error handling, and cross-browser sanity.
 
 ## Prerequisites
 - Node.js 18+ and npm
@@ -31,17 +31,15 @@ cypress/
 ├─ pages/              # Page Object Models
 ├─ e2e/                # spec files
 └─ support/            # custom commands and setup
-   ├─ commands.js      # cy.getFirst(), cy.safeClick(), cy.login()
-   ├─ api.js           # API validation helpers
-   ├─ utils.js         # test data generators
-   ├─ network.js       # network intercepts and retry logic
-   ├─ waits.js         # explicit wait utilities
-   └─ e2e.js           # global hooks and setup
+  ├─ commands.js      # cy.getFirst(), cy.login()
+  ├─ api.js           # API validation helpers
+  ├─ utils.js         # test data generators
+  ├─ network.js       # network intercepts and retry logic
+  ├─ test-helpers.js  # shared steps and ensureUser/ensureToken
+  └─ e2e.js           # global hooks and setup
 docs/
 ├─ testing-matrix.md   # test strategy and priorities
-└─ stability-guide.md  # comprehensive stability features
-tests/
-└─ matrix-mapping.md   # mapping of test cases to specs
+└─ stability-guide.md  # stability features
 .github/
 └─ workflows/
    └─ cypress-tests.yml  # GitHub Actions: run tests & deploy Allure to GitHub Pages
@@ -51,15 +49,15 @@ tests/
 This framework includes comprehensive stability enhancements:
 - **Selector fallbacks**: `cy.getFirst()` tries multiple selectors
 - **Network resilience**: API intercepts and retry logic
-- **Explicit waits**: Element ready checks and page load detection
-- **Error logging**: Allure attachments for all failures
+- **Retries**: 2 retries in CI via Cypress `runMode` config
+- **Error logging**: Allure attachments for failures
 - **Test isolation**: Automatic cleanup between tests
-- **Extended timeouts**: Configured for slow networks
+- **Extended timeouts**: Tuned for slower networks
 
 See [docs/stability-guide.md](docs/stability-guide.md) for complete details and usage examples.
 
-## Self-Healing Tests
-Tests are designed to be resilient and self-healing through multiple strategies:
+## Resilience
+Tests are designed to be resilient through selector fallbacks, CI retries, and dual UI+API validation.
 
 ### Selector Resilience
 Every critical element has **multiple fallback selectors** that are tried in order:
@@ -71,12 +69,10 @@ If the primary selector fails (e.g., due to UI changes), the test automatically 
 
 ### Retry Logic
 - **Automatic retries**: 2 retries in CI, 0 in dev mode
-- **Smart click retries**: `cy.safeClick()` retries failed clicks with exponential backoff
-- **Command retries**: `retryCommand()` helper for flaky operations
+- **Config-level**: Cypress `retries.runMode = 2`
 
 ### Network Resilience
 - **API intercepts**: All API calls are intercepted and monitored
-- **Conditional waits**: Tests wait for network calls to complete before assertions
 - **Timeout handling**: Extended timeouts (up to 60s for page loads, 30s for API responses)
 
 ### Dual Validation (UI + API)
@@ -84,26 +80,23 @@ Every UI operation is verified through the API:
 - Add contact via UI → Verify via `GET /contacts`
 - Login via UI → Verify token via `GET /users/me`
 
-This catches UI-only or API-only issues and ensures test accuracy even if the UI has visual bugs.
-
 ### Adaptive Fallbacks
 When optional UI elements are missing (e.g., "Return to Contact List" button), tests fall back to direct navigation:
 ```javascript
 returnToList() {
-  // Try clicking button first, fall back to direct navigation
   if (buttonExists) {
     cy.wrap(btn).click();
   } else {
-    cy.visit('/contactList');  // Fallback
+    cy.visit('/contactList');
   }
 }
 ```
 
 ### Benefits
-- **~90% reduction** in selector-based flakiness
-- **Automatic recovery** from transient network issues
-- **Detailed logging** of all fallback usage for debugging
-- **Stable in CI/CD** with consistent viewport and test isolation
+- Reduction in selector-based flakiness
+- Recovery from transient network issues
+- Detailed logging of fallback usage for debugging
+- Stable in CI/CD with consistent viewport and test isolation
 
 ## Writing tests
 - Base URL: `https://thinking-tester-contact-list.herokuapp.com`
@@ -154,23 +147,6 @@ The workflow [.github/workflows/cypress-tests.yml](.github/workflows/cypress-tes
 - Each subsequent run adds to history, showing trends over time
 - Trend graphs appear in Allure after 2+ runs
 - History is automatically preserved between deployments
-
-### GitHub Pages Setup
-To enable GitHub Pages for your Allure reports:
-
-1. **Enable GitHub Pages** in your repository:
-   - Go to Settings → Pages
-   - Source: Select "GitHub Actions"
-   - Save
-
-2. **Run the workflow:**
-   - Push to `main` branch, or
-   - Go to Actions tab → "Cypress Tests with Allure Report" → Run workflow
-
-3. **Access your report:**
-   - After the workflow completes, your Allure report will be available at:
-   - `https://<username>.github.io/<repository-name>/`
-   - The URL is also shown in the workflow deployment step
 
 ### Viewing Reports
 - **Latest report**: Visit your GitHub Pages URL

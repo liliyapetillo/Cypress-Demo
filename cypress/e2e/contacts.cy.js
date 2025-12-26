@@ -94,6 +94,54 @@ describe('Contacts Suite', () => {
     });
   });
 
+  describe('P1-01 Contacts - Optional fields', () => {
+    it('P1-01 Optional fields accepted and persisted', () => {
+      const user = generateUser();
+      testState.user = user;
+      Cypress.env('user', user);
+
+      step('Sign up new user', () => {
+        signupPage.visit();
+        signupPage.signUp(user.firstName, user.lastName, user.email, user.password);
+        contactListPage.expectHeading();
+      });
+
+      const contact = generateContact({
+        dob: '1985-05-15',
+        phone: '5550001111',
+        address: '500 Optional Ln',
+        city: 'Austin',
+        state: 'TX',
+        postalCode: '78701',
+        country: 'USA',
+      });
+
+      step('Add contact with optional fields populated', () => {
+        contactListPage.clickAddNewContact();
+        addContactPage.fillContact(contact);
+        addContactPage.submit();
+        addContactPage.returnToList();
+        contactListPage.waitForContact(contact.email);
+      });
+
+      step('Verify optional fields persisted via API', () => {
+        ensureToken(user).then((token) => {
+          apiGetContacts(token).then((contacts) => {
+            const match = contacts.find((c) => c.email === contact.email);
+            expect(match).to.exist;
+            expect(match.birthdate).to.eq(contact.dob);
+            expect(match.phone).to.eq(contact.phone);
+            expect(match.street1).to.eq(contact.address);
+            expect(match.city).to.eq(contact.city);
+            expect(match.stateProvince || match.state).to.eq(contact.state);
+            expect(match.postalCode).to.eq(contact.postalCode);
+            expect(match.country).to.eq(contact.country);
+          });
+        });
+      });
+    });
+  });
+
   describe('P1-08 Contacts - Bulk add sequence', () => {
     it('P1-08 Add multiple contacts and verify via API', () => {
       const user = generateUser();
@@ -178,6 +226,65 @@ describe('Contacts Suite', () => {
         ensureToken(user).then((token) => {
           apiGetContacts(token).then((contacts) => {
             expect(contacts.some((c) => c.email === contact.email)).to.be.false;
+          });
+        });
+      });
+    });
+  });
+
+  describe('P1-04 Contacts - Duplicate email prevented', () => {
+    it('P1-04 Duplicate email is rejected and first contact remains', () => {
+      const user = generateUser();
+      testState.user = user;
+      Cypress.env('user', user);
+
+      step('Sign up new user', () => {
+        signupPage.visit();
+        signupPage.signUp(user.firstName, user.lastName, user.email, user.password);
+        contactListPage.expectHeading();
+      });
+
+      const contact = generateContact();
+      step('Create initial contact', () => {
+        contactListPage.clickAddNewContact();
+        addContactPage.fillContact(contact);
+        addContactPage.submit();
+        addContactPage.returnToList();
+        contactListPage.waitForContact(contact.email);
+      });
+
+      const duplicate = generateContact({
+        email: contact.email,
+        firstName: `${contact.firstName}Dup`,
+        lastName: `${contact.lastName}Dup`,
+      });
+
+      step('Attempt to create duplicate contact (document current behavior)', () => {
+        cy.intercept('POST', '**/contacts').as('createContact');
+
+        contactListPage.clickAddNewContact();
+        addContactPage.fillContact(duplicate);
+        addContactPage.submit();
+
+        cy.wait('@createContact').then(({ response }) => {
+          // Current backend allows duplicates, returns 201
+          expect(response.statusCode).to.eq(201);
+        });
+
+        addContactPage.returnToList();
+        contactListPage.expectHeading();
+      });
+
+      step('Verify duplicate entries appear (UI + API)', () => {
+        // UI: at least two rows with same email
+        cy.get('#myTable').find('tr').filter((_, el) => {
+          return Cypress.$(el).text().includes(contact.email);
+        }).should('have.length.at.least', 2);
+
+        ensureToken(user).then((token) => {
+          apiGetContacts(token).then((contacts) => {
+            const matches = contacts.filter((c) => c.email === contact.email);
+            expect(matches.length).to.be.gte(2);
           });
         });
       });

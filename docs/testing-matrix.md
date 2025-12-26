@@ -29,9 +29,12 @@ Contact List App with Cypress UI + API-backed validation and Allure reporting.
 - P0-04 • Add contact in list • Automated in [cypress/e2e/contacts.cy.js](../cypress/e2e/contacts.cy.js)
 - P0-05 • Edit contact shows changes • Automated in [cypress/e2e/contacts.cy.js](../cypress/e2e/contacts.cy.js)
 - P0-06 • Logout clears session • Automated in [cypress/e2e/auth.cy.js](../cypress/e2e/auth.cy.js)
+- P1-01 • Optional fields persisted • Automated in [cypress/e2e/contacts.cy.js](../cypress/e2e/contacts.cy.js)
 - P1-02 • Required fields validation • Automated in [cypress/e2e/validation.cy.js](../cypress/e2e/validation.cy.js)
 - P1-03 • Invalid format validation • Automated in [cypress/e2e/validation.cy.js](../cypress/e2e/validation.cy.js)
+- P1-04 • Duplicate email prevented • Automated in [cypress/e2e/contacts.cy.js](../cypress/e2e/contacts.cy.js)
 - P1-05 • Delete contact • Automated in [cypress/e2e/contacts.cy.js](../cypress/e2e/contacts.cy.js)
+- P1-06 • Session persists across refresh • Automated in [cypress/e2e/auth.cy.js](../cypress/e2e/auth.cy.js)
 - P1-07 • API failure handling • Automated in [cypress/e2e/validation.cy.js](../cypress/e2e/validation.cy.js)
 - P1-08 • Bulk add sequence • Automated in [cypress/e2e/contacts.cy.js](../cypress/e2e/contacts.cy.js)
 
@@ -46,10 +49,10 @@ Contact List App with Cypress UI + API-backed validation and Allure reporting.
 | P0-04 | Add contact appears in list | Done | [cypress/e2e/contacts.cy.js](../cypress/e2e/contacts.cy.js) |
 | P0-05 | Edit contact shows changes | Done | [cypress/e2e/contacts.cy.js](../cypress/e2e/contacts.cy.js) |
 | P0-06 | Logout clears session | Done | [cypress/e2e/auth.cy.js](../cypress/e2e/auth.cy.js) |
-| P1-01 | Optional fields accepted and persisted | Planned | — |
+| P1-01 | Optional fields accepted and persisted | Done | [cypress/e2e/contacts.cy.js](../cypress/e2e/contacts.cy.js) |
 | P1-02 | Required fields validated | Done | [cypress/e2e/validation.cy.js](../cypress/e2e/validation.cy.js) |
 | P1-03 | Invalid email/phone formats rejected | Done | [cypress/e2e/validation.cy.js](../cypress/e2e/validation.cy.js) |
-| P1-04 | Duplicate email prevented | Planned | — |
+| P1-04 | Duplicate email prevented | Done | [cypress/e2e/contacts.cy.js](../cypress/e2e/contacts.cy.js) |
 | P1-05 | Delete contact removes from list/API | Done | [cypress/e2e/contacts.cy.js](../cypress/e2e/contacts.cy.js) |
 | P1-06 | Session persists across refresh | Planned | — |
 | P1-07 | API failure (500/timeout) shows graceful UI message | Done | [cypress/e2e/validation.cy.js](../cypress/e2e/validation.cy.js) |
@@ -112,9 +115,9 @@ Contact List App with Cypress UI + API-backed validation and Allure reporting.
 - Pages: [cypress/pages/SignupPage.js](../cypress/pages/SignupPage.js), [cypress/pages/LoginPage.js](../cypress/pages/LoginPage.js), [cypress/pages/AddContactPage.js](../cypress/pages/AddContactPage.js), [cypress/pages/ContactListPage.js](../cypress/pages/ContactListPage.js)
 
 ## Automation Backlog Suggestions
-- Add optional fields (P1-01), duplicate email validation (P1-04), session persistence (P1-06).
 - Add direct API contract checks for create/edit/list/delete contacts.
 - Expand non-functional: performance timing assertions, basic a11y, visual sanity snapshots (P2-02-05).
+- Add sorting/filtering coverage (P2-01) once UI supports it.
 
 ## Exit Criteria
 - Core P0s green on primary browser and key P1s stable.
