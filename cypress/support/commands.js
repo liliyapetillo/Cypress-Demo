@@ -34,4 +34,11 @@ Cypress.Commands.add('getFirst', (selectors, options = {}) => {
   });
 });
 
+/**
+ * Sends Tab key to move focus to the next focusable element.
+ */
+Cypress.Commands.add('tab', () => {
+  cy.focused().type('{tab}');
+});
+
 
