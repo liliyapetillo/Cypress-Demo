@@ -114,7 +114,7 @@ jobs:
           retention-days: 7
 
   deploy-report:
-    if: always()
+    if: github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master') && needs.cypress-run.result == 'success'
     needs: cypress-run
     runs-on: ubuntu-latest
     steps:
