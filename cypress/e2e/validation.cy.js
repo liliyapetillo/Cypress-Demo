@@ -2,7 +2,7 @@ import SignupPage from '../pages/SignupPage';
 import ContactListPage from '../pages/ContactListPage';
 import AddContactPage from '../pages/AddContactPage';
 import { generateUser, generateContact } from '../support/utils';
-import { step, testState } from '../support/test-helpers';
+import { step } from '../support/test-helpers';
 
 const signupPage = new SignupPage();
 const contactListPage = new ContactListPage();
@@ -16,8 +16,6 @@ describe('Validation & Errors', () => {
   describe('P1-02 Required Fields', () => {
     it('P1-02 Missing required fields show inline errors', () => {
       const user = generateUser();
-      testState.user = user;
-      Cypress.env('user', user);
 
       step('Sign up new user', () => {
         signupPage.visit();
@@ -48,8 +46,6 @@ describe('Validation & Errors', () => {
   describe('P1-03 Invalid Formats', () => {
     it('P1-03 Invalid email/phone formats are rejected with clear messaging', () => {
       const user = generateUser();
-      testState.user = user;
-      Cypress.env('user', user);
 
       step('Sign up new user', () => {
         signupPage.visit();
@@ -90,8 +86,6 @@ describe('Validation & Errors - API Failures', () => {
   describe('P1-07 API Failure Handling', () => {
     it('P1-07 API failure (500/timeout) shows graceful UI message', () => {
       const user = generateUser();
-      testState.user = user;
-      Cypress.env('user', user);
 
       step('Sign up new user', () => {
         signupPage.visit();

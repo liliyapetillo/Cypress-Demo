@@ -3,8 +3,7 @@ import LoginPage from '../pages/LoginPage';
 import ContactListPage from '../pages/ContactListPage';
 import AddContactPage from '../pages/AddContactPage';
 import { generateUser, generateContact } from '../support/utils';
-import { apiGetContacts } from '../support/api';
-import { step, testState, ensureToken } from '../support/test-helpers';
+import { step, ensureToken, apiGetContacts } from '../support/test-helpers';
 
 describe('E2E Smoke Suite - Critical Path', () => {
   const signupPage = new SignupPage();
@@ -18,8 +17,6 @@ describe('E2E Smoke Suite - Critical Path', () => {
 
   it('E2E-01: Complete user journey - signup, login, add contact, edit contact', () => {
     const user = generateUser();
-    testState.user = user;
-    Cypress.env('user', user);
 
     step('Sign up new user', () => {
       signupPage.visit();

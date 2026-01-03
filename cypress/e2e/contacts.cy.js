@@ -1,13 +1,10 @@
 import SignupPage from '../pages/SignupPage';
-import LoginPage from '../pages/LoginPage';
 import ContactListPage from '../pages/ContactListPage';
 import AddContactPage from '../pages/AddContactPage';
 import { generateContact, generateUser } from '../support/utils';
-import { apiGetContacts } from '../support/api';
-import { step, testState, ensureToken } from '../support/test-helpers';
+import { step, ensureToken, apiGetContacts } from '../support/test-helpers';
 
 const signupPage = new SignupPage();
-const loginPage = new LoginPage();
 const contactListPage = new ContactListPage();
 const addContactPage = new AddContactPage();
 
@@ -19,8 +16,6 @@ describe('Contacts Suite', () => {
   describe('P0-04 Contacts - Add (required fields)', () => {
     it('P0-04 Add new contact and verify via API', () => {
       const user = generateUser();
-      testState.user = user;
-      Cypress.env('user', user);
 
       step('Sign up new user', () => {
         signupPage.visit();
@@ -50,8 +45,6 @@ describe('Contacts Suite', () => {
   describe('P0-05 Contacts - Edit (first/last name)', () => {
     it('P0-05 Edit contact names and verify via API', () => {
       const user = generateUser();
-      testState.user = user;
-      Cypress.env('user', user);
 
       step('Sign up new user', () => {
         signupPage.visit();
@@ -97,8 +90,6 @@ describe('Contacts Suite', () => {
   describe('P1-01 Contacts - Optional fields', () => {
     it('P1-01 Optional fields accepted and persisted', () => {
       const user = generateUser();
-      testState.user = user;
-      Cypress.env('user', user);
 
       step('Sign up new user', () => {
         signupPage.visit();
@@ -145,8 +136,6 @@ describe('Contacts Suite', () => {
   describe('P1-08 Contacts - Bulk add sequence', () => {
     it('P1-08 Add multiple contacts and verify via API', () => {
       const user = generateUser();
-      testState.user = user;
-      Cypress.env('user', user);
 
       step('Sign up new user', () => {
         signupPage.visit();
@@ -186,8 +175,6 @@ describe('Contacts Suite', () => {
   describe('P1-05 Contacts - Delete', () => {
     it('P1-05 Delete contact removes from list and API', () => {
       const user = generateUser();
-      testState.user = user;
-      Cypress.env('user', user);
 
       step('Sign up new user', () => {
         signupPage.visit();
@@ -235,8 +222,6 @@ describe('Contacts Suite', () => {
   describe('P1-04 Contacts - Duplicate email prevented', () => {
     it('P1-04 Duplicate email is rejected and first contact remains', () => {
       const user = generateUser();
-      testState.user = user;
-      Cypress.env('user', user);
 
       step('Sign up new user', () => {
         signupPage.visit();

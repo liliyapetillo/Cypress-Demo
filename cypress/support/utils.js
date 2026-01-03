@@ -4,19 +4,20 @@ export function uniqueEmail(prefix = 'test', domain = 'example.com') {
   return `${prefix}${timestamp}${random}@${domain}`;
 }
 
-export function generateContact(overrides = {}) {
+export function generateContact(details = {}) {
   const stamp = Date.now().toString().slice(-5);
   return {
-    firstName: overrides.firstName || `Test${stamp}`,
-    lastName: overrides.lastName || `User${stamp}`,
-    dob: overrides.dob || '1990-01-01',
-    email: overrides.email || uniqueEmail('contact'),
-    phone: overrides.phone || '5555551234',
-    country: overrides.country || 'USA',
-    postalCode: overrides.postalCode || '12345',
-    city: overrides.city || 'TestCity',
-    state: overrides.state || 'CA',
-    address: overrides.address || '123 Test St',
+    firstName: `Test${stamp}`,
+    lastName: `User${stamp}`,
+    dob: '1990-01-01',
+    email: uniqueEmail('contact'),
+    phone: '5555551234',
+    country: 'USA',
+    postalCode: '12345',
+    city: 'TestCity',
+    state: 'CA',
+    address: '123 Test St',
+    ...details,
   };
 }
 

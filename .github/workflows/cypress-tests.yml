@@ -17,7 +17,48 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
-  cypress-run:
+  smoke-tests:
+    # Required check for PR merge - must pass
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Lint code
+        run: npm run lint
+
+      - name: Run E2E smoke tests
+        run: npx cypress run --spec "cypress/e2e/e2e-smoke.cy.js"
+        env:
+          CI: true
+
+      - name: Upload smoke test videos on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: smoke-videos
+          path: cypress/videos
+          retention-days: 7
+
+      - name: Upload smoke test screenshots on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: smoke-screenshots
+          path: cypress/screenshots
+          retention-days: 7
+
+  full-test-suite:
+    # Optional - runs in parallel but doesn't block PR merge
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -56,8 +97,8 @@ jobs:
             echo "No prior history.zip found (status $STATUS); likely first or clean run"
           fi
 
-      - name: Run Cypress tests (Electron base)
-        run: npm run cypress:run
+      - name: Run full test suite (excluding smoke)
+        run: npx cypress run --spec "cypress/e2e/{auth,contacts,validation,nonfunctional}.cy.js"
         env:
           CI: true
 
@@ -114,8 +155,8 @@ jobs:
           retention-days: 7
 
   deploy-report:
-    if: github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master') && needs.cypress-run.result == 'success'
-    needs: cypress-run
+    if: github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master') && needs.full-test-suite.result == 'success'
+    needs: full-test-suite
     runs-on: ubuntu-latest
     steps:
       - name: Checkout

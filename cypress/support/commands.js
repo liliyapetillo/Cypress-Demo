@@ -1,10 +1,3 @@
-// Custom Cypress commands.
-Cypress.Commands.add('login', (email, password) => {
-  cy.get('input[placeholder="Email"], input#email').clear().type(email);
-  cy.get('input[placeholder="Password"], input#password').clear().type(password);
-  cy.contains('button', 'Submit').click();
-});
-
 /**
  * Tries multiple selectors until one is found, enhancing test resilience.
  * @param {string[]} selectors - Array of selectors to try in order
@@ -32,13 +25,6 @@ Cypress.Commands.add('getFirst', (selectors, options = {}) => {
     cy.allure().attachment('Selector Error', errorMsg, 'text/plain');
     throw new Error(errorMsg);
   });
-});
-
-/**
- * Sends Tab key to move focus to the next focusable element.
- */
-Cypress.Commands.add('tab', () => {
-  cy.focused().type('{tab}');
 });
 
 

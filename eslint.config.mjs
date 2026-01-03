@@ -11,6 +11,7 @@ const cypressGlobals = {
   after: 'readonly',
   afterEach: 'readonly',
   expect: 'readonly',
+  console: 'readonly',
 };
 
 export default [
