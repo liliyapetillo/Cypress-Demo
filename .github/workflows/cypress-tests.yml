@@ -18,6 +18,7 @@ concurrency:
 
 jobs:
   smoke-tests:
+    # Required check for PR merge - must pass
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -57,6 +58,7 @@ jobs:
           retention-days: 7
 
   full-test-suite:
+    # Optional - runs in parallel but doesn't block PR merge
     runs-on: ubuntu-latest
     steps:
       - name: Checkout

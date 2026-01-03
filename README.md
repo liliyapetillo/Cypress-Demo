@@ -63,14 +63,14 @@ cypress/support/      # Commands, API helpers, utils
 
 **Runs on:** Every push/PR  
 **Checks:** 2 parallel jobs
-- Smoke tests (e2e-smoke.cy.js + linting) – fast feedback ~1min
-- Full suite (auth, contacts, validation, nonfunctional) – complete coverage ~3min
+- Smoke tests (e2e-smoke.cy.js + linting) – fast feedback ~1min ✅ **required for merge**
+- Full suite (auth, contacts, validation, nonfunctional) – complete coverage ~3min (optional)
 
-**Gates:** Both checks must pass before merge  
+**Merge Policy:** Only smoke tests must pass. Full suite runs in parallel for visibility but doesn't block merges.  
 **Deploy:** Allure report to GitHub Pages (master only)  
 **Artifacts:** Videos, screenshots, reports (30-day retention)
 
-**Failure handling:** PRs blocked until fixed. Master pushes don't deploy report if tests fail.
+**Setup:** Configure `smoke-tests` as required status check in GitHub branch protection settings.
 
 ## Key Features
 
