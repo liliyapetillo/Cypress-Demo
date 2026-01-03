@@ -1,5 +1,31 @@
-import { generateUser } from './utils';
-import { apiLogin } from './api';
+export function apiLogin(email, password) {
+  return cy
+    .request('POST', '/users/login', { email, password })
+    .then((response) => {
+      expect(response.status).to.eq(200);
+      const token = response.body.token;
+      expect(token).to.exist;
+      return cy
+        .request({
+          method: 'GET',
+          url: '/users/me',
+          headers: { Authorization: `Bearer ${token}` },
+        })
+        .then((profileResp) => {
+          expect(profileResp.status).to.eq(200);
+          return { token, profile: profileResp.body };
+        });
+    });
+}
+
+export function apiGetContacts(token) {
+  return cy
+    .request({ method: 'GET', url: '/contacts', headers: { Authorization: `Bearer ${token}` } })
+    .then((resp) => {
+      expect(resp.status).to.eq(200);
+      return resp.body;
+    });
+}
 
 export const step = (title, action) => {
   cy.allure().startStep(title);
@@ -8,32 +34,6 @@ export const step = (title, action) => {
     cy.allure().endStep();
     return result;
   });
-};
-
-export const testState = { user: null };
-
-export const ensureUser = (signupPage, contactListPage) => {
-  return cy
-    .then(() => {
-      const existing = Cypress.env('user');
-      if (existing) {
-        testState.user = existing;
-        return existing;
-      }
-      return null;
-    })
-    .then((existing) => {
-      if (existing) return existing;
-      const user = generateUser();
-      testState.user = user;
-      Cypress.env('user', user);
-      step('Sign up user', () => {
-        signupPage.visit();
-        signupPage.signUp(user.firstName, user.lastName, user.email, user.password);
-        contactListPage.expectHeading();
-      });
-      return user;
-    });
 };
 
 export const ensureToken = (user) =>

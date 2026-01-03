@@ -1,18 +1,29 @@
 {
   "name": "cypress-demo",
   "version": "1.0.0",
-  "description": "",
+  "description": "E2E test automation framework for contact management app with Cypress, Allure reporting, and CI/CD",
   "main": "index.js",
   "scripts": {
     "cypress:open": "cypress open",
     "cypress:run": "cypress run",
     "test": "npm run cypress:run",
-    "allure:generate": "mkdir -p allure-results/history && cp -r allure-report/history/* allure-results/history 2>/dev/null || true && allure generate allure-results -o allure-report --clean",
+    "test:headed": "cypress run --headed",
+    "test:chrome": "cypress run --browser chrome",
+    "allure:generate": "[ -d allure-report/history ] && cp -R allure-report/history allure-results/ || true; allure generate allure-results -o allure-report",
     "allure:open": "allure open allure-report",
+    "allure:clean": "rm -rf allure-results allure-report",
     "lint": "eslint .",
-    "allure:clean": "rm -rf allure-results allure-report"
+    "lint:fix": "eslint . --fix"
   },
-  "keywords": [],
+  "keywords": [
+    "cypress",
+    "e2e",
+    "testing",
+    "automation",
+    "allure",
+    "ci-cd",
+    "page-object-model"
+  ],
   "author": "",
   "license": "ISC",
   "type": "commonjs",

@@ -32,19 +32,6 @@ module.exports = defineConfig({
     
     setupNodeEvents(on, config) {
       allureWriter(on, config);
-      
-      // Capture console logs on failure
-      on('task', {
-        log(message) {
-          console.log(message);
-          return null;
-        },
-        table(message) {
-          console.table(message);
-          return null;
-        },
-      });
-      
       return config;
     },
   },
