@@ -60,7 +60,7 @@ Contact List App with Cypress UI + API-backed validation and Allure reporting.
 | P2-01 | Sorting/filtering stays correct after add/edit/delete | Planned | — |
 | P2-02 | Pagination/long-list performance sanity | Planned | [cypress/e2e/nonfunctional.cy.js](../cypress/e2e/nonfunctional.cy.js) |
 | P2-03 | Accessibility smoke (focus/labels/keyboard) | Planned | [cypress/e2e/nonfunctional.cy.js](../cypress/e2e/nonfunctional.cy.js) |
-| P2-04 | Cross-browser sanity (Chrome/Firefox) | Done | [cypress/e2e/nonfunctional.cy.js](../cypress/e2e/nonfunctional.cy.js) |
+| P2-04 | Cross-browser sanity (Chrome only) | Done | [cypress/e2e/nonfunctional.cy.js](../cypress/e2e/nonfunctional.cy.js) |
 | P2-05 | Visual sanity: key fields, empty states | Planned | [cypress/e2e/nonfunctional.cy.js](../cypress/e2e/nonfunctional.cy.js) |
 
 ## Priority & Impact Definitions
@@ -99,18 +99,18 @@ Contact List App with Cypress UI + API-backed validation and Allure reporting.
 ## Non-functional
 - P2-02: Pagination/long-list performance sanity (P2, Medium).
 - P2-03: Accessibility smoke (focus order, labels, keyboard submit) (P2, Medium).
-- P2-04: Cross-browser sanity (Chrome/Firefox/WebKit) (P2, High).
+- P2-04: Cross-browser sanity (Chrome only) (P2, High).
 - P2-05: Visual sanity: rows show key fields; empty states are clear (P2, Medium).
 
 ## Observability & Reporting
 - Allure enabled; failures attach screenshots/video; history for trends.
-- Helpers in cypress/support/api.js and cypress/support/test-helpers.js for API parity and Allure steps.
+- Helpers in cypress/support/test-helpers.js for API parity and Allure steps.
 
 ## Mapping to Current Automation
 - Auth flows (4 tests): [cypress/e2e/auth.cy.js](../cypress/e2e/auth.cy.js) - P0-01, P0-02, P0-03, P0-06
-- Contacts flows (4 tests): [cypress/e2e/contacts.cy.js](../cypress/e2e/contacts.cy.js) - P0-04, P0-05, P1-05, P1-08
+- Contacts flows (6 tests): [cypress/e2e/contacts.cy.js](../cypress/e2e/contacts.cy.js) - P0-04, P0-05, P1-01, P1-04, P1-05, P1-08
 - Validation & errors (3 tests): [cypress/e2e/validation.cy.js](../cypress/e2e/validation.cy.js) - P1-02, P1-03, P1-07
-- E2E smoke tests (2 tests): [cypress/e2e/e2e-smoke.cy.js](../cypress/e2e/e2e-smoke.cy.js) - complete user journeys
+- E2E smoke tests (1 test): [cypress/e2e/e2e-smoke.cy.js](../cypress/e2e/e2e-smoke.cy.js) - complete user journey (signup, login, add, edit)
 - Non-functional placeholders: [cypress/e2e/nonfunctional.cy.js](../cypress/e2e/nonfunctional.cy.js)
 - Pages: [cypress/pages/SignupPage.js](../cypress/pages/SignupPage.js), [cypress/pages/LoginPage.js](../cypress/pages/LoginPage.js), [cypress/pages/AddContactPage.js](../cypress/pages/AddContactPage.js), [cypress/pages/ContactListPage.js](../cypress/pages/ContactListPage.js)
 

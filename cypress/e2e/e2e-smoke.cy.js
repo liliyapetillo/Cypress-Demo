@@ -79,23 +79,4 @@ describe('E2E Smoke Suite - Critical Path', () => {
       });
     });
   });
-
-  it('E2E-02: Quick signup and contact add', () => {
-    const user = generateUser();
-    
-    step('Sign up user', () => {
-      signupPage.visit();
-      signupPage.signUp(user.firstName, user.lastName, user.email, user.password);
-      contactListPage.expectHeading();
-    });
-
-    const contact = generateContact();
-    step('Add contact immediately after signup', () => {
-      contactListPage.clickAddNewContact();
-      addContactPage.fillContact(contact);
-      addContactPage.submit();
-      addContactPage.returnToList();
-      contactListPage.waitForContact(contact.email);
-    });
-  });
 });

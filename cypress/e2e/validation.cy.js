@@ -2,7 +2,7 @@ import SignupPage from '../pages/SignupPage';
 import ContactListPage from '../pages/ContactListPage';
 import AddContactPage from '../pages/AddContactPage';
 import { generateUser, generateContact } from '../support/utils';
-import { step } from '../support/test-helpers';
+import { step, ensureToken, apiGetContacts } from '../support/test-helpers';
 
 const signupPage = new SignupPage();
 const contactListPage = new ContactListPage();
@@ -25,19 +25,25 @@ describe('Validation & Errors', () => {
 
       step('Try to submit contact without required fields', () => {
         contactListPage.clickAddNewContact();
-        
+
         // Try to submit without filling required fields
         cy.get('button[type="submit"]').click();
-        
-        // The app should show an error or stay on the form
+
+        // The app should either reject the submission (stay on the form) or show an error
         cy.url().then((url) => {
           if (url.includes('/addContact')) {
-            // Stayed on add contact page - validation prevented submission
-            cy.log('Form validation prevented submission');
+            cy.url().should('include', '/addContact');
           } else {
-            // Check for error message on contact list
-            cy.contains(/error|required|invalid/i, { timeout: 5000 });
+            cy.contains(/error|required|invalid/i, { timeout: 5000 }).should('be.visible');
           }
+        });
+      });
+
+      step('Verify no contact was created', () => {
+        ensureToken(user).then((token) => {
+          apiGetContacts(token).then((contacts) => {
+            expect(contacts).to.have.length(0);
+          });
         });
       });
     });
@@ -56,22 +62,28 @@ describe('Validation & Errors', () => {
       const contact = generateContact();
       step('Try to submit contact with invalid email format', () => {
         contactListPage.clickAddNewContact();
-        
+
         cy.get('#firstName').type(contact.firstName);
         cy.get('#lastName').type(contact.lastName);
         cy.get('#email').type('invalid-email-format');
-        
+
         cy.get('button[type="submit"]').click();
-        
-        // The app should show an error or stay on the form
+
+        // The app should either reject the submission (stay on the form) or show an error
         cy.url().then((url) => {
           if (url.includes('/addContact')) {
-            // Stayed on add contact page - validation prevented submission
-            cy.log('Email format validation prevented submission');
+            cy.url().should('include', '/addContact');
           } else {
-            // Check for error message on contact list
-            cy.contains(/error|invalid|email/i, { timeout: 5000 });
+            cy.contains(/error|invalid|email/i, { timeout: 5000 }).should('be.visible');
           }
+        });
+      });
+
+      step('Verify no contact with the invalid email was created', () => {
+        ensureToken(user).then((token) => {
+          apiGetContacts(token).then((contacts) => {
+            expect(contacts.some((c) => c.email === 'invalid-email-format')).to.be.false;
+          });
         });
       });
     });

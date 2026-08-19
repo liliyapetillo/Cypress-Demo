@@ -20,14 +20,14 @@ npm run allure:generate && npm run allure:open  # View report
 
 ## Test Coverage
 
-**17 tests** | **100% pass rate** | **~45s execution**
+**16 tests** | **100% pass rate** | **~40s execution**
 
 | Category | Count | Coverage |
 |----------|-------|----------|
 | Auth | 4 | Signup, login, logout, errors |
 | CRUD | 6 | Add, edit, delete contacts |
 | Validation | 3 | Required fields, formats, error handling |
-| E2E | 2 | Full user journeys |
+| E2E | 1 | Full user journey (signup → login → add → edit) |
 | A11y | 1 | Keyboard navigation |
 | Cross-browser | 1 | Chrome smoke test only |
 
