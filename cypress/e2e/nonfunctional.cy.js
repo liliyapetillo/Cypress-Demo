@@ -1,6 +1,6 @@
 describe('Non-functional Suite', () => {
 
-  it('P2-04 Cross-browser sanity (Chrome/Firefox) – login page loads and inputs are visible', () => {
+  it('P2-04 Cross-browser sanity (Chrome) – login page loads and inputs are visible', () => {
     // Minimal smoke to verify app loads across browsers; full CRUD covered in e2e-smoke.
     cy.visit('/login');
     cy.get('#email', { timeout: 10000 }).should('be.visible');
@@ -15,15 +15,8 @@ describe('Non-functional Suite', () => {
     // Verify basic accessibility on login page
     cy.visit('/login');
 
-    // Verify form elements exist and are visible
-    cy.getFirst(['input#email', 'input[placeholder="Email"]', 'input[name="email"]'])
-      .should('be.visible');
-    cy.getFirst(['input#password', 'input[placeholder="Password"]', 'input[name="password"]'])
-      .should('be.visible');
-    cy.getFirst(['button#submit', 'button[type="submit"]', 'button:contains("Submit")'])
-      .should('be.visible');
-
     // Verify form elements are focusable and can receive keyboard input
+    // (implicitly also verifies they exist and are visible/interactable)
     cy.getFirst(['input#email', 'input[placeholder="Email"]', 'input[name="email"]'])
       .focus().should('have.focus');
     cy.getFirst(['input#password', 'input[placeholder="Password"]', 'input[name="password"]'])

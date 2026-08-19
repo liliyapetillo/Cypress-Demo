@@ -4,3 +4,4 @@ allure-results
 allure-report
 cypress/videos
 cypress/screenshots
+docs/github-setup.md
